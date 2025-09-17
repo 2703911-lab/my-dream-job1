@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .star {
+            position: absolute;
+            top: -20px;
+            color: #fff;
+            animation: animate 5s linear forwards;
+        }
+
+        .star::before {
+            content: "\f005";
+            font-family: FontAwesome;
+            text-shadow: 0 0 5px #fff, 0 0 20px #fff, 0 0 50px #fff;
+        }
+
+        @keyframes animate {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .star {
+                font-size: 8px;
+            }
+        }
+
+        .flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            animation: flashScreen 0.5s ease;
+        }
+
+        @keyframes flashScreen {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            text-align: center;
+            padding: 2em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease-in;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1, h2, h3 {
+            color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
+            /* Glossy white text */
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2em auto;
+            padding: 2em;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        #career {
+            display: none;
+        }
+
+        .slide-in {
+            animation: slideInFromRight 1s ease-out;
+        }
+
+        @keyframes slideInFromRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .career-img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1.5em auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .career-img:hover {
+            transform: scale(1.05);
+        }
+
+        p {
+            line-height: 1.6;
+            margin: 1em 0;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            animation-delay: 0.5s;
+        }
+
+        ul {
+            margin: 1em 0;
+            padding-left: 2em;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            animation-delay: 0.7s;
+        }
+
+        button {
+            display: block;
+            margin: 2em auto;
+            padding: 1em 2em;
+            background-color: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 10;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        button:hover {
+            background-color: #fff;
+            color: #000;
+            box-shadow: 0 0 10px #fff;
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Falling Stars Script -->
+    <script>
+        function stars() {
+            let e = document.createElement("div");
+            e.setAttribute("class", "star");
+            document.body.appendChild(e);
+            e.style.left = Math.random() * window.innerWidth + "px";
+
+            let size = Math.random() * 12;
+            let duration = Math.random() * 3;
+
+            e.style.fontSize = 12 + size + "px";
+            e.style.animationDuration = 2 + duration + "s";
+            setTimeout(function () {
+                document.body.removeChild(e);
+            }, 5000);
+        }
+
+        setInterval(function () {
+            stars();
+        }, 50);
+    </script>
+
+    <!-- Flash Transition Script -->
+    <script>
+        function showCareer() {
+            const flash = document.createElement("div");
+            flash.classList.add("flash");
+            document.body.appendChild(flash);
+            setTimeout(() => {
+                document.getElementById('home').style.display = 'none';
+                const career = document.getElementById('career');
+                career.style.display = 'block';
+                career.classList.add('slide-in');
+                setTimeout(() => {
+                    document.body.removeChild(flash);
+                }, 500);
+            }, 500);
+        }
+    </script>
+
+    <!-- Page 1: About Me -->
+    <header>
+        <h1>About Me</h1>
+    </header>
+    <div class="container" id="home">
+        <h2>Jayden Walligton</h2>
+        <p><strong>Class:</strong> 9B</p>
+        <p><strong>Grade:</strong> 9</p>
+        <p><strong>Semester:</strong> Semester One</p>
+        <button onclick="showCareer()">View Second Page</button>
+    </div>
+
+    <!-- Page 2: Career Interest Page -->
+    <div class="container" id="career">
+        <h2>Career Interest: Police Officer</h2>
+        <h3>Dream Job Description</h3>
+        <p>My dream job is to become a Police Officer, a role where I can protect and serve my community. As a police officer, I would patrol neighborhoods to maintain safety, respond to emergency calls, investigate crimes, and make arrests when necessary. I’d also write detailed reports, enforce traffic laws, and engage with the community to build trust and promote safety. This career is exciting and meaningful because it allows me to make a real difference by keeping people safe and upholding justice.</p>
+
+        <h3>Qualifications Needed</h3>
+        <p>To become a police officer, I need the following qualifications:</p>
+        <ul>
+            <li><strong>Education:</strong> A high school diploma or GED is required. Some agencies prefer candidates with college coursework or an associate’s degree in criminal justice.</li>
+            <li><strong>Age:</strong> Must be at least 21 years old (some agencies accept 18-year-olds).</li>
+            <li><strong>Physical Fitness:</strong> Pass a physical fitness test to show strength, agility, and endurance.</li>
+            <li><strong>Background Check:</strong> A clean criminal record, good driving history, and stable credit are required.</li>
+            <li><strong>Training:</strong> Complete police academy training, which includes law enforcement techniques, firearms training, and emergency response.</li>
+            <li><strong>Other Requirements:</strong> A valid driver’s license, U.S. citizenship, and passing psychological and polygraph tests.</li>
+        </ul>
+        <p><strong>University and Program:</strong> While not always required, a degree in criminal justice can improve my chances of getting hired and advancing. I could attend Arizona State University’s Bachelor’s in Criminology and Criminal Justice program, which offers courses in law enforcement, criminal law, and investigative techniques to prepare me for this career.</p>
+
+        <h3>Average Salary</h3>
+        <p>The average annual salary for a police officer in the United States is approximately $74,910. Starting salaries are around $63,488, while experienced officers in high-paying areas like California can earn up to $113,460 or more.</p>
+
+        <h3>Companies to Work For</h3>
+        <p>As a police officer, I could work for agencies such as:</p>
+        <ul>
+            <li>Local Police Departments (e.g., New York Police Department, Los Angeles Police Department)</li>
+            <li>Sheriff’s Offices (e.g., Maricopa County Sheriff’s Office)</li>
+            <li>State Police or Highway Patrol (e.g., California Highway Patrol)</li>
+            <li>Federal Agencies (e.g., FBI or DEA, with additional training)</li>
+        </ul>
+
+        <h3>Career Image</h3>
+        <img src="https://via.placeholder.com/600x400?text=Police+Officer" alt="Male Police Officer in Uniform" class="career-img">
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Jayden Walligton. All rights reserved.</p>
+    </footer>
+</body>
+</html>
