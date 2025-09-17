@@ -19,6 +19,31 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            cursor: none; /* Hide default cursor */
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 6px #fff, 0 0 12px #fff;
+            will-change: transform; /* Optimize for GPU */
+        }
+
+        .cursor-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #fff;
+            z-index: 999;
+            will-change: transform, opacity; /* Optimize for GPU */
         }
 
         .star {
@@ -52,25 +77,70 @@
             .star {
                 font-size: 8px;
             }
+            .custom-cursor {
+                width: 14px;
+                height: 14px;
+            }
         }
 
-        .flash {
-            position: fixed;
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #fff, 0 0 15px #fff;
+            z-index: 15;
+            will-change: transform, opacity;
+        }
+
+        .shooting-stars {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: #fff;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 20;
-            animation: flashScreen 0.5s ease;
+            height: 100vh;
+            background: transparent;
+            z-index: -1;
+            overflow: hidden;
         }
 
-        @keyframes flashScreen {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
+        :root {
+            --star-size: 3px;
+            --star-glow: rgba(255, 255, 255, 0.15);
+        }
+
+        span.shooting-star {
+            position: absolute;
+            width: var(--star-size);
+            height: var(--star-size);
+            border-radius: 50%;
+            box-shadow: 0 0 0 6px var(--star-glow), 0 0 30px var(--star-glow), 0 0 40px var(--star-glow);
+            animation: shootingStar 3s linear infinite;
+        }
+
+        span.shooting-star::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 180px;
+            height: 1px;
+            background: linear-gradient(90deg, #fff, transparent);
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: rotate(-45deg) translateX(0);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(-45deg) translateX(-1100px);
+                opacity: 0;
+            }
         }
 
         header {
@@ -79,40 +149,37 @@
             text-align: center;
             padding: 2em;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            animation: fadeIn 1s ease-in;
             position: relative;
             z-index: 10;
         }
 
         h1, h2, h3 {
             color: #fff;
-            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
-            /* Glossy white text */
+            text-shadow: 0 0 8px #fff, 0 0 16px #fff, 0 0 24px #fff;
         }
 
         .container {
             max-width: 900px;
             margin: 2em auto;
             padding: 2em;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.85);
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255,255,255,0.1);
-            animation: slideIn 0.8s ease-out;
+            box-shadow: 0 0 12px rgba(255,255,255,0.15);
             position: relative;
             z-index: 10;
+            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            will-change: opacity, transform;
+        }
+
+        #home {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         #career {
             display: none;
-        }
-
-        .slide-in {
-            animation: slideInFromRight 1s ease-out;
-        }
-
-        @keyframes slideInFromRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            opacity: 0;
+            transform: scale(0.98);
         }
 
         .career-img {
@@ -133,16 +200,16 @@
             line-height: 1.6;
             margin: 1em 0;
             opacity: 0;
-            animation: fadeIn 1s ease-in forwards;
-            animation-delay: 0.5s;
+            animation: fadeIn 0.7s ease-in forwards;
+            animation-delay: 0.3s;
         }
 
         ul {
             margin: 1em 0;
             padding-left: 2em;
             opacity: 0;
-            animation: fadeIn 1s ease-in forwards;
-            animation-delay: 0.7s;
+            animation: fadeIn 0.7s ease-in forwards;
+            animation-delay: 0.5s;
         }
 
         button {
@@ -154,17 +221,78 @@
             border: 2px solid #fff;
             border-radius: 5px;
             font-size: 1.2em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: none;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
             z-index: 10;
-            text-shadow: 0 0 10px #fff;
+            text-shadow: 0 0 8px #fff;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        button.button-fade-in {
+            animation: buttonFadeIn 0.7s ease forwards;
+        }
+
+        @keyframes buttonFadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+                box-shadow: 0 0 0 rgba(255,255,255,0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(255,255,255,0.3);
+            }
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.4s ease;
+        }
+
+        button:hover::after {
+            left: 100%;
         }
 
         button:hover {
             background-color: #fff;
             color: #000;
-            box-shadow: 0 0 10px #fff;
-            transform: scale(1.05);
+            box-shadow: 0 0 15px #fff;
+        }
+
+        button:active {
+            background-color: #333;
+            box-shadow: 0 0 5px #fff;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.9em;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: none;
+            text-shadow: 0 0 8px #fff;
+            transition: transform 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
+            z-index: 15;
+            padding: 4px;
+            opacity: 0;
+            animation: buttonFadeIn 0.7s ease forwards 0.2s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.15);
+            text-shadow: 0 0 12px #fff;
         }
 
         footer {
@@ -183,14 +311,49 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
     </style>
 </head>
 <body>
+    <div class="custom-cursor"></div>
+    <section class="shooting-stars"></section>
+
+    <!-- Custom Cursor and Particle Script -->
+    <script>
+        const cursor = document.querySelector('.custom-cursor');
+        let lastParticleTime = 0;
+        const particleInterval = 80; // Throttle particle creation (ms)
+
+        function createCursorParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('cursor-particle');
+            document.body.appendChild(particle);
+            particle.style.transform = `translate(${x}px, ${y}px)`;
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = 20 + Math.random() * 30;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            particle.style.transition = 'all 0.4s ease';
+            requestAnimationFrame(() => {
+                particle.style.transform = `translate(${x + tx}px, ${y + ty}px) scale(0.2)`;
+                particle.style.opacity = '0';
+                setTimeout(() => particle.remove(), 400);
+            });
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const now = performance.now();
+            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+
+            if (now - lastParticleTime > particleInterval) {
+                const particleCount = Math.random() * 5 + 5;
+                for (let i = 0; i < particleCount; i++) {
+                    createCursorParticle(e.clientX, e.clientY);
+                }
+                lastParticleTime = now;
+            }
+        });
+    </script>
+
     <!-- Falling Stars Script -->
     <script>
         function stars() {
@@ -199,10 +362,10 @@
             document.body.appendChild(e);
             e.style.left = Math.random() * window.innerWidth + "px";
 
-            let size = Math.random() * 12;
-            let duration = Math.random() * 3;
+            let size = Math.random() * 10;
+            let duration = Math.random() * 2 + 2;
 
-            e.style.fontSize = 12 + size + "px";
+            e.style.fontSize = 10 + size + "px";
             e.style.animationDuration = 2 + duration + "s";
             setTimeout(function () {
                 document.body.removeChild(e);
@@ -211,25 +374,120 @@
 
         setInterval(function () {
             stars();
-        }, 50);
+        }, 60);
     </script>
 
-    <!-- Flash Transition Script -->
+    <!-- Shooting Stars Script -->
     <script>
-        function showCareer() {
-            const flash = document.createElement("div");
-            flash.classList.add("flash");
-            document.body.appendChild(flash);
-            setTimeout(() => {
-                document.getElementById('home').style.display = 'none';
-                const career = document.getElementById('career');
-                career.style.display = 'block';
-                career.classList.add('slide-in');
-                setTimeout(() => {
-                    document.body.removeChild(flash);
-                }, 500);
-            }, 500);
+        const numStars = 12;
+        const colors = ['#ff8c00', '#32cd32', '#1e90ff', '#ff1493', '#ffff54', '#9400d3'];
+
+        const shootingStarsSection = document.querySelector('.shooting-stars');
+
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('span');
+            star.classList.add('shooting-star');
+            const topPosition = Math.random() * window.innerHeight;
+            const rightPosition = Math.random() * window.innerWidth;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const animationDelay = -Math.random() * 2.5 + 's';
+            const animationDuration = (Math.random() * 1 + 1.5) + 's';
+
+            star.style.top = topPosition + 'px';
+            star.style.right = rightPosition + 'px';
+            star.style.background = color;
+            star.style.animationDelay = animationDelay;
+            star.style.animationDuration = animationDuration;
+
+            shootingStarsSection.appendChild(star);
         }
+    </script>
+
+    <!-- Transition Script -->
+    <script>
+        function animateElement(element, properties, duration) {
+            return new Promise(resolve => {
+                element.style.transition = `all ${duration}s ease`;
+                Object.assign(element.style, properties);
+                element.addEventListener('transitionend', resolve, { once: true });
+            });
+        }
+
+        async function showCareer() {
+            const button = document.querySelector('#home button');
+            const home = document.getElementById('home');
+            const career = document.getElementById('career');
+
+            // Ensure career is hidden and reset
+            career.style.display = 'none';
+            career.style.opacity = '0';
+            career.style.transform = 'scale(0.98)';
+
+            // Fade out button
+            await animateElement(button, { opacity: '0' }, 0.3);
+            button.style.display = 'none';
+
+            // Fade out home
+            await animateElement(home, { opacity: '0' }, 0.3);
+            home.style.display = 'none';
+
+            // Fade in career
+            career.style.display = 'block';
+            await animateElement(career, {
+                opacity: '1',
+                transform: 'scale(1)',
+                boxShadow: '0 0 12px rgba(255,255,255,0.3)'
+            }, 0.4);
+        }
+
+        async function closeCareer() {
+            const career = document.getElementById('career');
+            const careerRect = career.getBoundingClientRect();
+            const careerCenterX = careerRect.left + careerRect.width / 2;
+            const careerCenterY = careerRect.top + careerRect.height / 2;
+
+            // Create particles
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement("div");
+                particle.classList.add("particle");
+                document.body.appendChild(particle);
+                particle.style.transform = `translate(${careerCenterX}px, ${careerCenterY}px)`;
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = 80 + Math.random() * 100;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                requestAnimationFrame(() => {
+                    particle.style.transition = 'all 0.5s ease';
+                    particle.style.transform = `translate(${careerCenterX + tx}px, ${careerCenterY + ty}px) scale(0.2)`;
+                    particle.style.opacity = '0';
+                    setTimeout(() => particle.remove(), 500);
+                });
+            }
+
+            // Fade out career
+            await animateElement(career, { opacity: '0', transform: 'scale(0.98)' }, 0.3);
+            career.style.display = 'none';
+
+            // Fade in home
+            const home = document.getElementById('home');
+            const button = document.querySelector('#home button');
+            home.style.display = 'block';
+            button.style.display = 'block';
+            button.style.opacity = '0';
+            button.classList.remove('button-fade-in');
+            void button.offsetWidth; // Force reflow
+            button.classList.add('button-fade-in');
+            await animateElement(home, {
+                opacity: '1',
+                transform: 'translateY(0)'
+            }, 0.3);
+        }
+
+        // Initialize button fade-in on page load
+        window.addEventListener('load', () => {
+            const button = document.querySelector('#home button');
+            button.classList.add('button-fade-in');
+        });
     </script>
 
     <!-- Page 1: About Me -->
@@ -246,6 +504,7 @@
 
     <!-- Page 2: Career Interest Page -->
     <div class="container" id="career">
+        <button class="close-btn" onclick="closeCareer()">✕</button>
         <h2>Career Interest: Police Officer</h2>
         <h3>Dream Job Description</h3>
         <p>My dream job is to become a Police Officer, a role where I can protect and serve my community. As a police officer, I would patrol neighborhoods to maintain safety, respond to emergency calls, investigate crimes, and make arrests when necessary. I’d also write detailed reports, enforce traffic laws, and engage with the community to build trust and promote safety. This career is exciting and meaningful because it allows me to make a real difference by keeping people safe and upholding justice.</p>
